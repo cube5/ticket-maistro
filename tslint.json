@@ -2,7 +2,7 @@
   "defaultSeverity": "warning",
   "extends": ["tslint:recommended"],
   "linterOptions": {
-    "exclude": ["node_modules/**", "tests/mocks/**"]
+    "exclude": ["node_modules/**", "tests/**"]
   },
   "rules": {
     "arrow-parens": false,
