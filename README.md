@@ -18,6 +18,8 @@
 - CSS Grid
 - UI using SCSS only (no external libraries)
 - Route transitions
+- Loading and error states
+- i18n
 
 ### TODO
 
@@ -69,4 +71,10 @@ npm run serve:storybook
 
 ```
 npm run build:storybook
+```
+
+### Deploys site to [Netlify](https://www.netlify.com/)
+
+```
+npm run deploy
 ```
