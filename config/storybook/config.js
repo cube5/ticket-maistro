@@ -1,8 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import moment from "moment";
+import Vue from "vue";
+import VueI18n from "vue-i18n";
 import { configure } from "@storybook/vue";
 
-moment.locale("es-MX");
+Vue.use(VueI18n);
 
 const req = require.context("../../src/stories", true, /.stories.js$/);
 

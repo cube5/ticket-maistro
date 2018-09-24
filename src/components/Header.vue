@@ -2,13 +2,13 @@
   <header id="header">
     <div class="brand">Ticket Maistro <small class="version">v{{version}}</small></div>
     <div class="middle">
-      <select id="lang" name="lang" @change="setCountry($event.target.value)">
+      <select id="lang" name="lang" @change="handleCountryChange">
         <option value="us">US</option>
         <option value="mx">MX</option>
-      </select>
+      </select> - {{ this.$store.getters.locale }}
     </div>
     <nav id="nav">
-      <router-link to="/">Home</router-link> |
+      <router-link to="/events">Home</router-link> |
       <router-link to="/about">About</router-link> |
       <a class="external" :href="github" target="_blank" title="github site (external)">Github</a>
     </nav>
@@ -24,16 +24,30 @@ const { version, repository } = require("../../package.json");
 export default class Header extends Vue {
   public version: string = version;
   public github: string = repository.url;
-  @Action public setCountry: any;
+  @Action("setCountry") public setCountry: any;
+
+  public setLocale(locale: string) {
+    this.$i18n.locale = locale;
+  }
+
+  public handleCountryChange(e: any) {
+    const country = e.target.value;
+    this.setCountry(country);
+
+    const { locale } = this.$store.getters;
+    this.setLocale(locale);
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 #header {
+  background-color: $white;
+  border-bottom: 1px solid $alternative;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   align-items: center;
-  padding: 15px 20px;
+  padding: 12px 20px;
 
   .brand {
     font-size: 26px;

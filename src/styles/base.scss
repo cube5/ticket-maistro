@@ -1,9 +1,18 @@
+html {
+  width: 100%;
+  height: 100%;
+}
+
 body {
+  width: 100%;
+  height: 100%;
   margin: 0;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: $dark;
+  background-color: #ebebeb;
+  font-size: 12pt;
 
   a {
     font-weight: bold;
@@ -11,8 +20,8 @@ body {
     text-decoration: none;
 
     &[target="_blank"]::after {
-      content: "\2750";
-      font-size: 10pt;
+      content: "🌐";
+      font-size: 8pt;
       font-weight: normal;
       vertical-align: super;
     }

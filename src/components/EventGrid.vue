@@ -20,7 +20,7 @@ export default class EventGrid extends Vue {
 <style lang="scss" scoped>
 .event-grid {
   display: grid;
-  grid-gap: 10px;
+  grid-gap: 40px;
   grid-template-columns: 1fr;
 
   @include for-tablet-portrait-up {

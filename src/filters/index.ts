@@ -5,6 +5,7 @@ Vue.filter("capitalize", capitalizeFilter);
 Vue.filter("currency", currencyFilter);
 Vue.filter("eventDate", eventDateFilter);
 Vue.filter("eventTime", eventTimeFilter);
+Vue.filter("eventSalesDate", eventSalesDateFilter);
 
 export function capitalizeFilter(value: string): string {
   if (!value) {
@@ -40,4 +41,11 @@ export function eventTimeFilter(value: string): string {
     return "";
   }
   return moment(value, "hh:mm:ss").format("hh:mm a");
+}
+
+export function eventSalesDateFilter(value: string): string {
+  if (!value) {
+    return "";
+  }
+  return moment(value, "YYYY-MM-DDThh:mm:ssZ").format("MMM DD");
 }

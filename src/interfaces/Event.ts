@@ -12,6 +12,8 @@ export default interface IEvent {
   dates?: any;
   images: any[];
   locale?: string;
+  sales?: any;
+  seatmap?: any;
   pleaseNote?: string;
   priceRanges?: IPriceRange[];
   _links?: any;

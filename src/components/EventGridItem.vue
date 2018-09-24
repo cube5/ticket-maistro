@@ -1,43 +1,37 @@
 <template>
-  <div
-    class="container"
-    :style="{
-      'background-image': backgroundImage
-    }"
-    @mouseover="handleMouseOver"
-    @mouseleave="handleMouseLeave"
+  <v-event-card
+    class="event-grid-item"
+    :event="event"
+    @mouseover.native="handleMouseOver"
+    @mouseleave.native="handleMouseLeave"
   >
     <div class="badges">
-      <div class="badge" v-for="priceRange in event.priceRanges">
-        From {{ priceRange.min | currency(priceRange.currency, event.locale) }}
+      <div v-if="priceRange" class="badge">
+        {{ $t("From") }} {{ priceRange.min | currency(priceRange.currency, event.locale) }}
+      </div>
+      <div v-else class="badge">
+        {{ $t("On Sale") }}: {{ publicSaleDate }}
       </div>
     </div>
-    <div class="content">
-      <div class="event-info">
-        <div class="event-title" :title="event.name">{{ event.name }}</div>
-        <div class="event-date">
-          {{ event.dates.start.localDate | eventDate | capitalize }}
-          <span class="divider"></span>
-          {{ venue }}
-          <span class="event-time">{{ event.dates.start.localTime | eventTime }}</span>
-        </div>
-      </div>
+    <template slot="footer">
       <v-appearing-box
         class="event-tickets"
         :class="isVisible ? 'visible' : 'hidden'"
         :pose="isVisible ? 'visible' : 'hidden'"
       >
-        <router-link :to="`/events/${event.id}`" class="unstyled-link">Buy tickets</router-link>
+        <router-link :to="`/events/${event.id}`" class="unstyled-link">{{ $t("Buy tickets") }}</router-link>
       </v-appearing-box>
-    </div>
-  </div>
+    </template>
+  </v-event-card>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 import posed from "vue-pose";
-import IEvent from "@/interfaces/Event";
+import moment from "moment";
+import IEvent, { IPriceRange } from "@/interfaces/Event";
 import VButton from "@/components/Button.vue";
+import VEventCard from "@/components/EventCard.vue";
 
 const VAppearingBox = posed.div({
   visible: {
@@ -50,21 +44,26 @@ const VAppearingBox = posed.div({
   }
 });
 
-@Component({ components: { VButton, VAppearingBox } })
+@Component({ components: { VButton, VEventCard, VAppearingBox } })
 export default class VEvent extends Vue {
   @Prop() public event!: IEvent;
   public isVisible: boolean = false;
 
-  get backgroundImage(): string {
-    const { images } = this.event;
-    const candidates = images.filter(
-      image => image.ratio === "3_2" && !image.fallback
-    );
-    const orderedByWidthAsc = candidates.sort(
-      (curr, next) => curr.width - next.width
-    );
-    const largerImage = orderedByWidthAsc[orderedByWidthAsc.length - 1];
-    return `url('${largerImage.url}')`;
+  get priceRange(): IPriceRange | null {
+    const { priceRanges } = this.event;
+    if (priceRanges && priceRanges.length !== 0) {
+      return priceRanges[0];
+    }
+
+    return null;
+  }
+
+  get publicSaleDate(): string {
+    const { sales } = this.event;
+    const { startDateTime, startTBD } = sales.public;
+    return startTBD
+      ? this.$t("Soon").toString()
+      : moment(startDateTime, "YYYY-MM-DDThh:mm:ssZ").format("MMM DD");
   }
 
   get venue(): string {
@@ -84,11 +83,7 @@ export default class VEvent extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  background-image: none;
-  background-size: cover;
-  border-radius: 10px;
-  box-shadow: inset 0em -20vh 30em rgba(0, 0, 0, 0.9);
+.event-grid-item {
   padding-top: 10px;
   display: grid;
   grid-template-rows: 1fr 8fr;
@@ -96,7 +91,7 @@ export default class VEvent extends Vue {
   .badges {
     color: $light;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
     align-items: center;
 
     .badge {
@@ -108,68 +103,24 @@ export default class VEvent extends Vue {
     }
   }
 
-  .divider {
-    width: 1px;
-    height: 100%;
-    border: 0px solid rgba(255, 255, 255, 0.8);
-    border-right-width: 1px;
-    margin: 0px 9px 0px 5px;
-
-    &::after {
-      content: "";
-    }
-  }
-
-  .content {
+  .event-tickets {
     color: $light;
-    display: grid;
-    grid-template-rows: 1fr;
-    align-items: end;
-    text-align: left;
+    font-size: 1.5em;
+    font-weight: bold;
+    line-height: 2em;
+    text-align: center;
+    background-color: $primary;
 
-    .event-info {
-      display: grid;
-      padding: 15px;
-
-      .event-title {
-        font-size: 1.5em;
-        font-weight: bold;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-      }
-
-      .event-date {
-        font-size: 1.2em;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-      }
-
-      .event-time {
-        font-size: 0.8em;
-      }
+    &.hidden {
+      visibility: hidden;
+    }
+    &.visible {
+      visibility: initial;
     }
 
-    .event-tickets {
+    .unstyled-link {
       color: $light;
-      font-size: 1.5em;
-      font-weight: bold;
-      line-height: 2em;
-      text-align: center;
-      background-color: $primary;
-
-      &.hidden {
-        visibility: hidden;
-      }
-      &.visible {
-        visibility: initial;
-      }
-
-      .unstyled-link {
-        color: $light;
-        text-decoration: none;
-      }
+      text-decoration: none;
     }
   }
 }
